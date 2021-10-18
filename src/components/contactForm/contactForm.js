@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { newContactAction } from '../Redux/action';
 import PropTypes from 'prop-types';
 import shortid from 'shortid';
 
-function ContactForm({ contacts, onSubmit }) {
+function ContactForm({ contacts, addContact }) {
   const [state, setState] = useState({
     name: '',
     number: '',
@@ -20,7 +22,7 @@ function ContactForm({ contacts, onSubmit }) {
     const { name, number } = state;
     const newObj = { name, number, id: shortid.generate() };
 
-    onSubmit(newObj);
+    addContact(newObj);
   };
 
   const formInput = ({ target }) => {
@@ -31,7 +33,6 @@ function ContactForm({ contacts, onSubmit }) {
   const formSubmit = e => {
     e.preventDefault();
     checkContact();
-
     reset();
   };
 
@@ -74,7 +75,15 @@ function ContactForm({ contacts, onSubmit }) {
   );
 }
 
-export default ContactForm;
+const stateProps = state => ({
+  contacts: state.contacts,
+});
+
+const newContactDispatch = dispatch => ({
+  addContact: contact => dispatch(newContactAction(contact)),
+});
+
+export default connect(stateProps, newContactDispatch)(ContactForm);
 
 ContactForm.propTypes = {
   contacts: PropTypes.arrayOf(PropTypes.object),
